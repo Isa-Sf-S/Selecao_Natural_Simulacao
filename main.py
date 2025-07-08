@@ -142,6 +142,25 @@ def index():
                     "ERRO: Você deve selecionar pelo menos uma população para continuar."
                 )
 
+            ### INÍCIO DA ALTERAÇÃO ###
+            # Validação para garantir que os campos das populações selecionadas foram preenchidos
+            for pop in populacoes_escolhidas:
+                n_inicial = request.form.get(f"{pop}_n")
+                taxa_reproducao = request.form.get(f"{pop}_taxa")
+                # Se um dos campos obrigatórios estiver vazio
+                if not n_inicial or not taxa_reproducao:
+                    return render_template_string(
+                        HTML_FORM,
+                        todas_as_pops=cores_disponiveis,
+                        # Passamos uma lista vazia para forçar a renderização apenas da Etapa 1
+                        populacoes_escolhidas=[],
+                        regioes=regioes_disponiveis,
+                        request=request,
+                        error=f"ERRO: Por favor, preencha o número inicial e a taxa de reprodução para a população '{pop}' antes de prosseguir."
+                    )
+            ### FIM DA ALTERAÇÃO ###
+
+
             return render_template_string(
                 HTML_FORM,
                 todas_as_pops=cores_disponiveis,
@@ -155,7 +174,7 @@ def index():
                 n = parse_int(request.form.get(f"{pop}_n"), 1, 1000, 100)
                 taxa = parse_float(request.form.get(f"{pop}_taxa"), 0, 1, 0.1)
                 regiao = request.form.get(f"{pop}_regiao",
-                                          regioes_disponiveis[0])
+                                        regioes_disponiveis[0])
                 populacoes[pop] = {
                     'quantidade': n,
                     'taxa': taxa,
